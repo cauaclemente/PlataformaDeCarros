@@ -1,12 +1,16 @@
 import logoImg from "../../assets/WebAutomotivos-reduzida.jpg";
-
 import { Container } from "../../components/Container";
-import { Link } from "react-router-dom";
 import { Input } from "../../components/input/index";
+
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth } from "../../Services/firebase";
 
 const schema = z.object({
   email: z.string().email("Insira um email válido").min(1,"O campo email é obrigatório"),
@@ -16,14 +20,31 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 function Login() {
+
+  const navigate = useNavigate()
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onChange"
   })
 
+  useEffect(() => {
+    async function handleLogout(){
+      await signOut(auth)
+    }
+    handleLogout()
+  },[])
 
   function onSubmit(data: FormData){
-    console.log(data);
+    signInWithEmailAndPassword(auth, data.email, data.password)
+    .then((user) =>{
+      console.log("Logado com sucesso")
+      console.log(user)
+      navigate("/dashboard", {replace: true})
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
   return (
@@ -68,7 +89,7 @@ function Login() {
         </form>
 
         <Link to="/register">
-          Ainda não possui uma conta? <span className="text-red-500"> Cadastre-se </span> 
+          Ainda não possui uma conta? <span style={{color: "#ff0000"}}> Cadastre-se </span> 
         </Link>
 
       </div>

@@ -1,12 +1,17 @@
 import logoImg from "../../assets/WebAutomotivos-reduzida.jpg";
-
 import { Container } from "../../components/Container";
-import { Link } from "react-router-dom";
 import { Input } from "../../components/input/index";
+
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { auth } from "../../Services/firebase";
+import { createUserWithEmailAndPassword, updateProfile, signOut} from "firebase/auth";
+
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatorio"),
@@ -17,14 +22,37 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 function Register() {
+
+  const navigate = useNavigate();
+  
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onChange"
   })
 
+  useEffect(() => {
+    async function handleLogout(){
+      await signOut(auth)
+    }
+    handleLogout()
+  },[])
 
-  function onSubmit(data: FormData){
-    console.log(data);
+
+  async function onSubmit(data: FormData){
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+    .then(async(user) => {
+      await updateProfile(user.user, {
+        displayName: data.name
+      })
+
+      console.log("Cadastro com sucesso")
+      navigate("/dashboard", {replace: true})
+    })
+    .catch((error) => {
+      alert("Erro ao cadastrar o usuario")
+      console.log(error)
+    })
+
   }
 
   return (
@@ -73,12 +101,12 @@ function Register() {
           </div>
 
           <button type="submit" className="bg-zinc-900 w-full rounded-md text-white h-10 font-medium">
-            Acessar
+            Cadastrar
           </button>
         </form>
 
         <Link to="/login">
-          Já possui uma conta? <span className="text-red-500"> Faça o login! </span> 
+          Já possui uma conta? <span style={{color: "#ff0000"}}> Faça o login! </span> 
         </Link>
 
       </div>
