@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard/Dashboard"
 import New from "./pages/Dashboard/new/New"
 import Login from "./pages/Login/Login"
 import Cadastro from "./pages/Register/Cadastro"
+import { Private } from "./Routes/Private"
 
 const router = createBrowserRouter([
   {
@@ -23,11 +24,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <Dashboard />
+        element: <Private> <Dashboard /> </Private>
       },
       {
         path: "/dashboard/new",
-        element: <New />
+        element: <Private> <New /> </Private> 
       },
       {
 
