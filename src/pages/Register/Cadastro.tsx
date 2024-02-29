@@ -46,7 +46,7 @@ function Register() {
             <Input
               type="text"
               placeholder="Digite seu nome..."
-              name="nome"
+              name="name"
               error={errors.name?.message}
               register={register}
             />
@@ -75,8 +75,11 @@ function Register() {
           <button type="submit" className="bg-zinc-900 w-full rounded-md text-white h-10 font-medium">
             Acessar
           </button>
-
         </form>
+
+        <Link to="/login">
+          Já possui uma conta? <span className="text-red-500"> Faça o login! </span> 
+        </Link>
 
       </div>
     </Container>
