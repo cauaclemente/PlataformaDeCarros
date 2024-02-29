@@ -1,7 +1,11 @@
+import { Container } from "../../components/Container"
+import { DashboardHeader } from "../../components/Panelhealder"
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <Container>
+      <DashboardHeader />
+    </Container>
   )
 }
 

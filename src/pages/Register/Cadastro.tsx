@@ -1,9 +1,10 @@
 import logoImg from "../../assets/WebAutomotivos-reduzida.jpg";
 import { Container } from "../../components/Container";
 import { Input } from "../../components/input/index";
+import { AuthContext } from "../../Contexts/AuthContext";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,6 +25,7 @@ type FormData = z.infer<typeof schema>
 function Register() {
 
   const navigate = useNavigate();
+  const { handleInfoUser } = useContext(AuthContext)
   
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -45,6 +47,11 @@ function Register() {
         displayName: data.name
       })
 
+      handleInfoUser({
+        name: data.name,
+        email: data.email,
+        uid: user.user.uid
+      })
       console.log("Cadastro com sucesso")
       navigate("/dashboard", {replace: true})
     })
