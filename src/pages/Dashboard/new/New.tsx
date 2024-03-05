@@ -11,7 +11,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { storage } from "../../../Services/firebase"
+import { storage, db } from "../../../Services/firebase"
 import {
   ref,
   getBytes,
@@ -19,6 +19,8 @@ import {
   deleteObject,
   uploadBytes
 } from "firebase/storage"
+
+import { addDoc, collection} from "firebase/firestore"
 
 const schema = z.object({
   name: z.string().min(1,"O campo nome é obrigatório"),
@@ -51,7 +53,6 @@ interface ImageItemProps{
 
   const [carImages, setCarImages] = useState<ImageItemProps[]>([])
 
-
   async function handleFile(e: ChangeEvent<HTMLInputElement>){
     if(e.target.files && e.target.files[0]){
       const image = e.target.files[0]
@@ -62,11 +63,8 @@ interface ImageItemProps{
         alert("Envie uma imagem jpeg ou png!")
         return;
       }
-
-
     }
   }
-  
   
   async function handleUpload(image: File){
     if(!user?.uid){
@@ -97,7 +95,40 @@ interface ImageItemProps{
   }
 
   function onSubmit(data: FormData){
-    console.log(data);
+    if(carImages.length === 0){
+      alert("Envie alguma imagem deste carro")
+      return;
+    }
+    const carListImages = carImages.map(car => {
+      return {
+        name: car.name,
+        uid: car.uid,
+        url: car.url,
+      }
+    })
+    addDoc(collection(db, "cars"), {
+      name: data.name,
+      model: data.model,
+      whatsapp: data.whatsapp,
+      city: data.city,
+      year: data.year,
+      km: data.km,
+      price: data.price,
+      description: data.description,
+      created: new Date(),
+      owner: user?.name,
+      uid: user?.uid,
+      images: carImages,
+    })
+    .then(() => {
+      reset()
+      setCarImages([])
+      console.log("Cadastrado com sucesso")
+      alert("Cadastrado com sucesso")
+    })
+    .catch((error) =>{
+      console.log(error)
+    })
   }
 
   async function handleDeleteImage(item: ImageItemProps){
@@ -204,7 +235,7 @@ interface ImageItemProps{
 
           <div className="flex w-full mb-3 flex-row items-center gap-4">
             <div className="w-full">
-              <p className="mb-2 font-medium">Telefone / Whatsapp</p>
+              <p className="mb-2 font-medium">Whatsapp</p>
               <Input
                 type="text"
                 register={register}
