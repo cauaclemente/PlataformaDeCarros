@@ -6,7 +6,8 @@ import { DashboardHeader } from "../../components/Panelhealder"
 import { AuthContext } from "../../Contexts/AuthContext"
 
 import { collection, getDocs, where, query, doc, deleteDoc} from "firebase/firestore"
-import { db } from "../../Services/firebase"
+import { db, storage } from "../../Services/firebase"
+import { ref, deleteObject} from "firebase/storage"
 
 
 interface CarProps{
@@ -63,10 +64,23 @@ const Dashboard = () => {
     loadCars()
   },[user])
 
-  async function handleDeleteCar(id: string){
-    const docRef = doc(db, "cars", id)
+  async function handleDeleteCar(car: CarProps){
+    const itemCar = car;
+
+    const docRef = doc(db, "cars", itemCar.id)
     await deleteDoc(docRef)
-    setCars(cars.filter(car => car.id !==id))
+
+    itemCar.images.map(async(image) => {
+      const imagePath = `images/${image.uid}/${image.name}`
+      const imageRef = ref(storage, imagePath)
+
+      try{
+        await deleteObject(imageRef)
+        setCars(cars.filter(car => car.id !==itemCar.id))
+      }catch{
+        alert("Erro ao excluir foto")
+      }
+    })
   }
 
   return (
@@ -76,7 +90,7 @@ const Dashboard = () => {
        {cars.map(car => (
           <section key={car.id} className="w-full bg-white rounded-lg relative">
           <button
-          onClick={() => handleDeleteCar(car.id)}
+          onClick={() => handleDeleteCar(car)}
           className="bg-white absolute w-14 h-14 rounded-full flex items-center justify-center right-2 top-2 drop-shadow"
           >
             <FiTrash2 size={22} />

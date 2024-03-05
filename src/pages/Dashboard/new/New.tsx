@@ -123,7 +123,6 @@ interface ImageItemProps{
     .then(() => {
       reset()
       setCarImages([])
-      console.log("Cadastrado com sucesso")
       alert("Cadastrado com sucesso")
     })
     .catch((error) =>{
@@ -139,10 +138,9 @@ interface ImageItemProps{
     try{
       await deleteObject(imageRef)
       setCarImages(carImages.filter((car) => car.url !== item.url))
-    }catch(error){
-      console.log("ERRO AO DELETAR " + error)
+    }catch{
+      alert("ERRO AO DELETAR ")
     }
-
 
   }
 
