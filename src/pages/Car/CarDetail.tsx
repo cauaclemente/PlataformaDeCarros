@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, Navigate, useNavigate } from "react-router-dom"
 import { FaWhatsapp } from"react-icons/fa"
 
 import { Container } from "../../components/Container"
@@ -33,6 +33,7 @@ interface ImagesCarProps{
 
 const CarDetail = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [car, setCar] = useState<CarProps[]>([])
   const [slidePreview, setSlidePreview] = useState<number>(2)
 
@@ -43,6 +44,11 @@ const CarDetail = () => {
       const docRef = doc(db, "cars", id)
       getDoc(docRef)
       .then((snapshot) => {
+
+        if(!snapshot.data()){
+          navigate("/")
+        }
+
         setCar({
           id: snapshot.id,
           name: snapshot.data()?.name,
@@ -87,12 +93,13 @@ const CarDetail = () => {
 
   return (
     <Container>
-      <Swiper
+      {car && (
+        <Swiper
         slidesPerView={slidePreview}
         pagination={{ clickable: true }}
         navigation
       >
-        { car && car.images && car?.images.map( image => (
+        {car.images && car?.images.map( image => (
           <SwiperSlide key={image.name}>
             <img
               src={image.url}
@@ -102,6 +109,7 @@ const CarDetail = () => {
         ))}
       </Swiper>
 
+      )}
       {car && (
         <main className="bg-white w-full rounded-lg p-6 my-4">
           <div className="flex flex-col sm:flex-row mb-4 items-center justify-between">
@@ -132,8 +140,10 @@ const CarDetail = () => {
             <strong>Descrição</strong>
               <p className=" mb-4">{car?.description}</p>
             <strong> WhatsApp</strong>
-              <p>{car.whatsapp}</p>
+              <p>{car?.whatsapp}</p>
             <a
+              href={`https://api.whatsapp.com/send?phone=${car?.whatsapp}&text=Olá ${car.owner} vi esse ${car.name} no site WebAutomotivos e fiquei interessado!`}
+              target="_blanck"
               className=" cursor-pointer bg-green-500 w-full text-white flex items-center justify-center gap-2 my-6 h-11 text-xl rounded-lg font-medium max-[360px]:text-base"
             >
               Conversar com vendedor
