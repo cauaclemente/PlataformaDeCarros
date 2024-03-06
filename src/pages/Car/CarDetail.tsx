@@ -7,30 +7,34 @@ import { Container } from "../../components/Container"
 import { getDoc, doc} from "firebase/firestore"
 import { db } from "../../Services/firebase"
 
+import { Swiper, SwiperSlide } from "swiper/react"
+
 interface CarProps{
-  id: string,
-  name: string,
-  model: string,
-  city: string,
-  year: string,
-  km: string,
-  description: string,
-  created: string,
-  prince: string | number,
-  owner: string,
-  uid: string,
-  whatsapp: string,
-  images: ImageCarProps[],
+  id: string;
+  name: string;
+  model: string;
+  city: string;
+  year: string;
+  km: string;
+  description: string;
+  created: string;
+  price: string | number;
+  owner: string;
+  uid: string;
+  whatsapp: string;
+  images: ImagesCarProps[];
 }
 
-interface ImageCarProps{
-  uid: string,
-  name: string,
-  url: string,
+interface ImagesCarProps{
+  uid: string;
+  name: string;
+  url: string;
 }
+
 const CarDetail = () => {
   const { id } = useParams()
   const [car, setCar] = useState<CarProps[]>([])
+  const [slidePreview, setSlidePreview] = useState<number>(2)
 
   useEffect(() => {
     async function loadCar(){
@@ -63,9 +67,40 @@ const CarDetail = () => {
     loadCar()
   }, [id])
 
+  useEffect(() => {
+    function handleResize(){
+      if(window.innerWidth <720){
+        setSlidePreview(1)
+      }else{
+        setSlidePreview(2)
+      }
+    }
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize)
+    
+    return() => {
+      window.removeEventListener("resize", handleResize)
+    }
+  } ,[])
+
   return (
     <Container>
-      <h1>Slider</h1>
+      <Swiper
+        slidesPerView={slidePreview}
+        pagination={{ clickable: true }}
+        navigation
+      >
+        { car && car.images && car?.images.map( image => (
+          <SwiperSlide key={image.name}>
+            <img
+              src={image.url}
+              className="w-full h-96 object-cover"
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
       {car && (
         <main className="bg-white w-full rounded-lg p-6 my-4">
