@@ -44,7 +44,7 @@ const Dashboard = () => {
   
       getDocs(queryRef)
       .then((snapshot) => {
-        let listcars = [] as CarProps
+        const listcars: CarProps[] = []
   
         snapshot.forEach(doc => {
           listcars.push({

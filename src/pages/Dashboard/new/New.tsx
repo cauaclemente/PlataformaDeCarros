@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { storage, db } from "../../../Services/firebase"
 import {
   ref,
-  getBytes,
   getDownloadURL,
   deleteObject,
   uploadBytes
@@ -106,6 +105,7 @@ interface ImageItemProps{
         uid: car.uid,
         url: car.url,
       }
+      console.log(carListImages)
     })
     addDoc(collection(db, "cars"), {
       name: data.name.toUpperCase(),

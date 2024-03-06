@@ -50,7 +50,7 @@ const Home = () => {
 
     getDocs(queryRef)
     .then((snapshot) => {
-      let listcars = [] as CarsProps
+      const listcars: CarsProps[] = []
 
       snapshot.forEach(doc => {
         listcars.push({
@@ -87,7 +87,7 @@ const Home = () => {
 
     const querySnapshot = await getDocs(q)
 
-    let listcars = [] as CarsProps
+    const listcars: CarsProps[] = []
     querySnapshot.forEach((doc) => {
       listcars.push({
         id: doc.id,
