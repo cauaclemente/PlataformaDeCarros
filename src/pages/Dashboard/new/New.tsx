@@ -19,8 +19,10 @@ import {
   deleteObject,
   uploadBytes
 } from "firebase/storage"
-
 import { addDoc, collection} from "firebase/firestore"
+
+import toast from "react-hot-toast"
+
 
 const schema = z.object({
   name: z.string().min(1,"O campo nome é obrigatório"),
@@ -87,8 +89,7 @@ interface ImageItemProps{
           }
 
           setCarImages((images) => [...images, imageItem] )
-
-
+          toast.success("Imaagem cadastrada com sucesso!")
         })
     })
 
@@ -96,7 +97,7 @@ interface ImageItemProps{
 
   function onSubmit(data: FormData){
     if(carImages.length === 0){
-      alert("Envie alguma imagem deste carro")
+      toast.error("Envie alguma imagem deste carro")
       return;
     }
     const carListImages = carImages.map(car => {
@@ -123,10 +124,10 @@ interface ImageItemProps{
     .then(() => {
       reset()
       setCarImages([])
-      alert("Cadastrado com sucesso")
+      toast.success("Carro cadastrado com sucesso!")
     })
-    .catch((error) =>{
-      console.log(error)
+    .catch(() =>{
+      toast.error("Erro ao cadastrar carro")
     })
   }
 
@@ -139,7 +140,7 @@ interface ImageItemProps{
       await deleteObject(imageRef)
       setCarImages(carImages.filter((car) => car.url !== item.url))
     }catch{
-      alert("ERRO AO DELETAR ")
+      toast.error("ERRO AO DELETAR ")
     }
 
   }

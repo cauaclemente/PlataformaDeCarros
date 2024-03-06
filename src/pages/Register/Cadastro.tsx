@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { auth } from "../../Services/firebase";
 import { createUserWithEmailAndPassword, updateProfile, signOut} from "firebase/auth";
 
+import toast from "react-hot-toast";
+
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatorio"),
@@ -52,11 +54,11 @@ function Register() {
         email: data.email,
         uid: user.user.uid
       })
-      console.log("Cadastro com sucesso")
+      toast.success("Bem vindo ao WebAutomotivos!")
       navigate("/dashboard", {replace: true})
     })
     .catch((error) => {
-      alert("Erro ao cadastrar o usuario")
+      toast.error("Erro ao cadastrar o usuario")
       console.log(error)
     })
 
