@@ -233,7 +233,7 @@ interface ImageItemProps{
 
           <div className="flex w-full mb-3 flex-row items-center gap-4">
             <div className="w-full">
-              <p className="mb-2 font-medium">Whatsapp</p>
+              <p className="mb-2 font-medium">WhatsApp</p>
               <Input
                 type="text"
                 register={register}
