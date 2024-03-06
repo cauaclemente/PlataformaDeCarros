@@ -117,8 +117,8 @@ const Home = () => {
           </button>
         </section>
         
-        <h1 className="font-bold text-center mt-6 text-2xl mb-4">
-          Carros novos e usados em todo Brasil
+        <h1 className="font-bold text-center mt-6 text-2xl mb-6">
+          Carros novos e usados em todo o Brasil
         </h1>
 
         <main className="grid gird-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
